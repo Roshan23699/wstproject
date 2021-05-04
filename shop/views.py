@@ -151,15 +151,7 @@ def order(request):
 		carx = len(Cart.objects.filter(user=request.user))
 	else : 
 		carx = None
-	s = smtplib.SMTP('smtp.gmail.com', 587)
-	s.starttls() 
-	s.login("wethestockedpantry@gmail.com", "Thestockedpantry@1234")
-	msg = EmailMessage()
-	subject = "Your Recent Order"
-	message = "Dear " + str(request.user) + ", ordered products will be delivered to you within 2-3 working days."
-	message = message + "\n"
-	message = message + "Your Order:"
-	message = message + "\n"
+	
 	cart = Cart.objects.filter(user=request.user)
 	n = len(cart)
 	list1 = []
@@ -180,20 +172,11 @@ def order(request):
 		orderr.save()
 		list1.append(orderr)
 		sum1 = sum1 + car.price * car.quantity
-		message = message + f"Product : {orderr.product_name}\tQuantity: {orderr.quantity}\tPrice: {orderr.price}\n"
+		
 	cart.delete()
 	order.price = sum1
 	profile = Profile.objects.filter(user=request.user).first()
 	order.shipped = profile.address
 	order.save()
-	message = message + "\n"
-	message = message + f"Total Price: {sum1}"
-	message = message + "\n"
-	message = message + " Thank you for using The Stocked Pantry.\n"
-	msg.set_content(message)
-	msg['Subject'] = subject
-	msg['From'] = "wethestockedpantry@gmail.com"
-	msg['To'] = request.user.email
-	s.send_message(msg)
-	s.quit()
+	
 	return render(request, 'shop/checkout.html', {'cart':len(Cart.objects.all()), 'list1': list1})
