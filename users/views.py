@@ -144,27 +144,7 @@ def cancel_order(request, idz):
     order.save()
     orders = Orders.objects.filter(user=request.user)
 
-    s = smtplib.SMTP('smtp.gmail.com', 587)
-    s.starttls()
-    s.login("wethestockedpantry@gmail.com", "Thestockedpantry@1234")
-    msg = EmailMessage()
-    subject = "The Stocked Pantry:Order Cancelled"
-    message = "Dear " + str(request.user) + ", Your Order For the following Products is cancelled: "
-    message = message + "\n"
-    message = message + "Order:"
-    message = message + "\n"
-    message = message + f"Product : {order.product_name}\tQuantity: {order.quantity}\tPrice: {order.price}\n"
-    message = message + '\n'
-    message = message + "Total Price: " + str(order.price)
-    message = message + "\n"
-    message = message + " Thank you for using Thestockedpantry.\n"
-    msg.set_content(message)
-    msg.set_content(message)
-    msg['Subject'] = subject
-    msg['From'] = "wethestockedpantry@gmail.com"
-    msg['To'] = request.user.email
-    s.send_message(msg)
-    s.quit()
+    
     sum = 0
     for order in orders:
         if order.product_name == 'default':
